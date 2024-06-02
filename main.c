@@ -18,7 +18,10 @@ int main(void) {
 
   while (1) {
     // Prompt
-    printf("> ");
+    char cwd[BUFFER_SIZE] = "";
+    getcwd(cwd, BUFFER_SIZE);
+    
+    printf("%s $ ", cwd);
     
     // Get user input
     if (fgets(buffer, BUFFER_SIZE, stdin) == NULL) {
@@ -27,15 +30,20 @@ int main(void) {
     }
     
     buffer[strcspn(buffer, "\n")] = 0; // Remove newline
-    
+
+    // TODO: Split string by space
+
     char *args[] = {NULL};
     
-    // Create child
+    // TODO: Add all strings except first to args
+    
+    // Create child to exec command
     pid_t pid = fork();
     if (pid == 0) {
       execvp(buffer, args);
     }
 
+    // Wait for current exec call to finish
     wait(NULL);
   }
 
