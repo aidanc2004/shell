@@ -31,16 +31,31 @@ int main(void) {
     
     buffer[strcspn(buffer, "\n")] = 0; // Remove newline
 
-    // TODO: Split string by space
+    char *args[BUFFER_SIZE] = {NULL};
+    int args_i = 0;
 
-    char *args[] = {NULL};
+    char *command;
+
+    //char *tok;
+    char *tok = strtok(buffer, " ");
     
-    // TODO: Add all strings except first to args
+    while (tok != NULL) {
+      // Set first argument to the command
+      if (args_i == 0) command = tok;
+      
+      args[args_i] = tok;
+
+      tok = strtok(NULL, " "); // Next token
+
+      args_i++;
+    }
+
+    args[args_i] = NULL;
     
     // Create child to exec command
     pid_t pid = fork();
     if (pid == 0) {
-      execvp(buffer, args);
+      execvp(command, args);
     }
 
     // Wait for current exec call to finish
