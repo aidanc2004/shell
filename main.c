@@ -9,17 +9,28 @@
 #include "sys/types.h"
 #include "sys/wait.h"
 
+#define BUFFER_SIZE 256
+
 int main() {
-  char *args[] = {"-a", NULL};
-  
-  pid_t pid = fork();
-  if (pid == 0) {
-    execvp("ls", args);
+  char buffer[BUFFER_SIZE] = {};
+
+  while (1) {
+    // Prompt
+    printf("> ");
+    
+    // TODO: Replace scanf with sscanf
+    scanf("%s", buffer);
+
+    char *args[] = {NULL};
+    
+    // Create child
+    pid_t pid = fork();
+    if (pid == 0) {
+      execvp(buffer, args);
+    }
+
+    wait(NULL);
   }
-
-  wait(NULL);
-
-  printf("done!\n");
 
   return 0;
 }
