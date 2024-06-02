@@ -13,8 +13,8 @@
 
 #define BUFFER_SIZE 256
 
-int main() {
-  char buffer[BUFFER_SIZE] = {};
+int main(void) {
+  char buffer[BUFFER_SIZE] = {0};
 
   while (1) {
     // Prompt
