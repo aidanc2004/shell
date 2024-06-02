@@ -5,7 +5,9 @@
  */
 
 #include "stdio.h"
+#include "stdlib.h"
 #include "unistd.h"
+#include "string.h"
 #include "sys/types.h"
 #include "sys/wait.h"
 
@@ -18,9 +20,14 @@ int main() {
     // Prompt
     printf("> ");
     
-    // TODO: Replace scanf with sscanf
-    scanf("%s", buffer);
-
+    // Get user input
+    if (fgets(buffer, BUFFER_SIZE, stdin) == NULL) {
+      fprintf(stderr, "Couldn't get input.\n");
+      exit(-1);
+    }
+    
+    buffer[strcspn(buffer, "\n")] = 0; // Remove newline
+    
     char *args[] = {NULL};
     
     // Create child
