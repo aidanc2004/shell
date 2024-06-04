@@ -13,9 +13,16 @@
 
 #define BUFFER_SIZE 256
 
+void execute_command(char *command, char *args[]) {
+  // Skip if command is "cd"
+  if (strncmp(command, "cd", BUFFER_SIZE) == 0) return;
+  
+  execvp(command, args);
+}
+
 int main(void) {
   char buffer[BUFFER_SIZE] = {0};
-
+  
   while (1) {
     // Prompt
     char cwd[BUFFER_SIZE] = "";
@@ -36,9 +43,8 @@ int main(void) {
 
     char *command;
 
-    //char *tok;
+    // Split input into arguments
     char *tok = strtok(buffer, " ");
-    
     while (tok != NULL) {
       // Set first argument to the command
       if (args_i == 0) command = tok;
@@ -50,12 +56,21 @@ int main(void) {
       args_i++;
     }
 
-    args[args_i] = NULL;
+    args[args_i] = NULL; // Last element to NULL
+
+    // 'cd' command, needs to be done before forking
+    if (strncmp(command, "cd", BUFFER_SIZE) == 0) {
+      int res = chdir(args[1]);
+      // Check for an error
+      if (res != 0) {
+        fprintf(stderr, "Err: Directory %s not found.\n", args[1]);
+      }
+    }
     
     // Create child to exec command
     pid_t pid = fork();
     if (pid == 0) {
-      execvp(command, args);
+      execute_command(command, args);
     }
 
     // Wait for current exec call to finish
